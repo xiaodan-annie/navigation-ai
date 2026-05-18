@@ -1,0 +1,158 @@
+/* =========================
+   GLOBAL STYLES
+========================= */
+
+body {
+    margin: 0;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background: #f3f5f7;
+    color: #222;
+}
+
+h2 {
+    margin-bottom: 20px;
+}
+
+h3 {
+    margin-top: 0;
+}
+
+/* =========================
+   TOP CONTROL BAR
+========================= */
+
+.controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.controls input {
+    padding: 12px;
+    width: 220px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+.controls button {
+    padding: 12px 20px;
+    background: #0078ff;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.2s ease;
+}
+
+.controls button:hover {
+    opacity: 0.9;
+}
+
+/* =========================
+   MAIN LAYOUT
+========================= */
+
+.main-layout {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.map-panel {
+    flex: 3;
+}
+
+.side-panel {
+    flex: 1;
+    background: white;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    max-height: 520px;
+    overflow-y: auto;
+}
+
+/* =========================
+   MAP
+========================= */
+
+#map {
+    height: 520px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* =========================
+   ROUTE SUMMARY
+========================= */
+
+#tripInfo {
+    margin-bottom: 20px;
+}
+
+#tripInfo p {
+    margin: 8px 0;
+    font-size: 15px;
+}
+
+/* =========================
+   DIRECTIONS PANEL
+========================= */
+
+.direction-card {
+    background: #f8f9fa;
+    border-left: 5px solid #0078ff;
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.direction-step {
+    font-size: 12px;
+    color: #777;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.direction-text {
+    font-size: 15px;
+    line-height: 1.4;
+}
+
+/* =========================
+   AI SUMMARY PANEL
+========================= */
+
+#output {
+    margin-top: 20px;
+    background: white;
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    line-height: 1.6;
+}
+
+/* =========================
+   RESPONSIVE DESIGN
+========================= */
+
+@media (max-width: 900px) {
+
+    .main-layout {
+        flex-direction: column;
+    }
+
+    .side-panel {
+        max-height: none;
+    }
+
+    #map {
+        height: 400px;
+    }
+}

@@ -1,0 +1,6 @@
+## requirements.txt
+#txt id="req1"
+fastapi
+uvicorn
+requests
+

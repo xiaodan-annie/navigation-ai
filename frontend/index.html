@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Navigation AI</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Leaflet CSS -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet/dist/leaflet.css"
+    />
+</head>
+
+<body>
+
+<h2>AI Navigation</h2>
+
+<div class="controls">
+
+    <input id="origin" placeholder="Origin">
+
+    <input id="destination" placeholder="Destination">
+
+    <button onclick="analyze()">
+        Analyze Route
+    </button>
+
+</div>
+
+<div class="main-layout">
+
+    <!-- MAP -->
+    <div class="map-panel">
+        <div id="map"></div>
+    </div>
+
+    <!-- SIDE PANEL -->
+    <div class="side-panel">
+
+        <h3>Trip Details</h3>
+
+        <div id="tripInfo"></div>
+
+        <hr>
+
+        <h3>Turn-by-Turn Directions</h3>
+
+        <div id="directions"></div>
+
+    </div>
+
+</div>
+
+<!-- AI SUMMARY -->
+<div id="output"></div>
+
+<!-- Leaflet -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<!-- Polyline decoder -->
+<script src="https://unpkg.com/@mapbox/polyline"></script>
+
+<!-- Your JS -->
+<script src="app.js"></script>
+
+</body>
+</html>
