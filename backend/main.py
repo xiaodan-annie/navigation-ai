@@ -3,6 +3,20 @@ from fastapi.middleware.cors import CORSMiddleware
 from openai import OpenAI
 import os
 import requests
+from pydantic import BaseModel, Field
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+class RouteRequest(BaseModel):
+    origin: str = Field(min_length=2, max_length=100)
+    destination: str = Field(min_length=2, max_length=100)
 
 client = OpenAI(
     api_key=os.getenv("OPENAI_API_KEY")
@@ -153,10 +167,14 @@ def ai_narrator(origin, destination, route, analysis):
 # 4. MAIN AGENT ENDPOINT
 # ---------------------------
 @app.post("/route")
-async def route(data: dict):
-
-    origin = data["origin"]
-    destination = data["destination"]
+#async def route(data: dict):
+#    origin = data["origin"]
+#    destination = data["destination"]
+async def route(data: RouteRequest):
+    origin = data.origin
+    destination = data.destination
+    origin = origin.strip().title()
+    destination = destination.strip().title()
 
     # Step 1: tools
     route_data = get_route_data(origin, destination)

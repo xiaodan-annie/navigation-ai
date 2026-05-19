@@ -13,42 +13,6 @@ initMap();
 
 async function analyze() {
 
-    const origin = document.getElementById("origin").value.trim();
-    const destination = document.getElementById("destination").value.trim();
-
-    // 1. Check empty input
-    if (!origin || !destination) {
-        alert("Please enter both origin and destination.");
-        return;
-    }
-
-    // 2. Prevent numbers-only input
-    if (!isNaN(origin) || !isNaN(destination)) {
-        alert("Please enter valid place names, not numbers.");
-        return;
-    }
-
-    // 3. Minimum length check
-    if (origin.length < 2 || destination.length < 2) {
-        alert("Please enter a valid location name.");
-        return;
-    }
-
-    const res = await fetch("https://navigation-ai-bxxs.onrender.com/route", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ origin, destination })
-    });
-
-    const data = await res.json();
-    console.log(data);
-}
-
-
-async function analyze_o() {
-
     const origin = document.getElementById("origin").value;
     const destination = document.getElementById("destination").value;
 
@@ -67,8 +31,6 @@ async function analyze_o() {
     // ----------------------------
     // TEXT OUTPUT
     // ----------------------------
-    document.getElementById("error").innerText = "Please enter valid inputs";
-    
     document.getElementById("output").innerHTML = `
         <h3>Route Analysis</h3>
         <p><b>Origin:</b> ${data.origin}</p>
