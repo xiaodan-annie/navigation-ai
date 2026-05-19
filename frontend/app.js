@@ -1,74 +1,83 @@
 let map;
 let routeLayer;
+let markerLayer;
 
+// ----------------------------
+// INIT MAP
+// ----------------------------
 function initMap() {
     map = L.map('map').setView([37.5, -122.0], 9);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors'
     }).addTo(map);
+
+    // Layer for markers (prevents stacking)
+    markerLayer = L.layerGroup().addTo(map);
 }
 
 initMap();
 
+
+// ----------------------------
+// MAIN FUNCTION
+// ----------------------------
 async function analyze() {
 
     const origin = document.getElementById("origin").value.trim();
     const destination = document.getElementById("destination").value.trim();
 
-    // 1. Check empty input
+    const errorBox = document.getElementById("error");
+
+    // ----------------------------
+    // VALIDATION
+    // ----------------------------
     if (!origin || !destination) {
-        alert("Please enter both origin and destination.");
+        errorBox.innerText = "Please enter both origin and destination.";
         return;
     }
 
-    // 2. Prevent numbers-only input
-    if (!isNaN(origin) || !isNaN(destination)) {
-        alert("Please enter valid place names, not numbers.");
+    if (/^\d+$/.test(origin) || /^\d+$/.test(destination)) {
+        errorBox.innerText = "Please enter valid place names, not numbers.";
         return;
     }
 
-    // 3. Minimum length check
     if (origin.length < 2 || destination.length < 2) {
-        alert("Please enter a valid location name.");
+        errorBox.innerText = "Location name is too short.";
         return;
     }
 
-    const res = await fetch("https://navigation-ai-bxxs.onrender.com/route", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ origin, destination })
-    });
+    errorBox.innerText = "";
 
-    const data = await res.json();
-    //console.log(data);
-}
+    // ----------------------------
+    // API CALL
+    // ----------------------------
+    let data;
 
+    try {
+        const res = await fetch("https://navigation-ai-bxxs.onrender.com/route", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ origin, destination })
+        });
 
-async function analyze_o() {
+        if (!res.ok) {
+            throw new Error("Backend error");
+        }
 
-    const origin = document.getElementById("origin").value;
-    const destination = document.getElementById("destination").value;
+        data = await res.json();
 
-    const res = await fetch("https://navigation-ai-bxxs.onrender.com/route", {
-    //const res = await fetch("http://127.0.0.1:8000/route", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ origin, destination })
-    });
-
-    const data = await res.json();
+    } catch (err) {
+        errorBox.innerText = "Failed to fetch route. Try again.";
+        return;
+    }
 
 
     // ----------------------------
     // TEXT OUTPUT
     // ----------------------------
-    document.getElementById("error").innerText = "Please enter valid inputs";
-
     document.getElementById("output").innerHTML = `
         <h3>Route Analysis</h3>
         <p><b>Origin:</b> ${data.origin}</p>
@@ -81,33 +90,30 @@ async function analyze_o() {
         <h3>AI Summary</h3>
         <div>${data.ai_summary}</div>
     `;
-    const panel = document.getElementById("directions");
-
-
-    panel.innerHTML = data.directions.map((step, i) => `
-        <div class="direction-card">
-
-            <div class="direction-step">
-                STEP ${i + 1}
-            </div>
-
-            <div class="direction-text">
-                ${step}
-            </div>
-
-        </div>
-    `).join("");
 
     document.getElementById("tripInfo").innerHTML = `
         <p><b>Distance:</b> ${data.distance}</p>
         <p><b>ETA:</b> ${data.eta}</p>
         <p><b>Traffic:</b> ${data.traffic}</p>
     `;
-    
+
+    // ----------------------------
+    // DIRECTIONS PANEL
+    // ----------------------------
+    const panel = document.getElementById("directions");
+
+    panel.innerHTML = (data.directions || []).map((step, i) => `
+        <div class="direction-card">
+            <div class="direction-step">STEP ${i + 1}</div>
+            <div class="direction-text">${step}</div>
+        </div>
+    `).join("");
+
 
     // ----------------------------
     // MAP UPDATE
     // ----------------------------
+
     const originLatLng = [
         data.origin_coords[1],
         data.origin_coords[0]
@@ -118,38 +124,41 @@ async function analyze_o() {
         data.destination_coords[0]
     ];
 
+    // Clear old markers
+    markerLayer.clearLayers();
+
+    // Add markers
+    markerLayer.addLayer(
+        L.marker(originLatLng).bindPopup("Origin")
+    );
+
+    markerLayer.addLayer(
+        L.marker(destLatLng).bindPopup("Destination")
+    );
+
     // Remove old route
     if (routeLayer) {
         map.removeLayer(routeLayer);
     }
 
-    // Markers
-    L.marker(originLatLng).addTo(map).bindPopup("Origin");
-    L.marker(destLatLng).addTo(map).bindPopup("Destination");
-
-    // Safety check
-    if (data.geometry) {
+    // ----------------------------
+    // ROUTE DRAWING
+    // ----------------------------
+    if (data.geometry && typeof polyline !== "undefined") {
 
         const decodedRoute = polyline.decode(data.geometry);
-
         const routeLatLngs = decodedRoute.map(p => [p[0], p[1]]);
-        
+
         let routeColor = "green";
 
-        if (data.traffic === "moderate") {
-            routeColor = "orange";
-        }
-
-        if (data.traffic === "heavy") {
-            routeColor = "red";
-        }
+        if (data.traffic === "moderate") routeColor = "orange";
+        if (data.traffic === "heavy") routeColor = "red";
 
         routeLayer = L.polyline(routeLatLngs, {
-            color: "blue",
+            color: routeColor,
             weight: 5
         }).addTo(map);
 
         map.fitBounds(routeLayer.getBounds());
     }
-
 }
