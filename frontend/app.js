@@ -16,10 +16,7 @@ async function analyze() {
     const origin = document.getElementById("origin").value;
     const destination = document.getElementById("destination").value;
 
-    const res = await fetch(
-    //"https://navigation-ai-backend.onrender.com/route", 
-        "https://navigation-ai-bxxs.onrender.com/route" 
-    {
+    const res = await fetch("https://navigation-ai-bxxs.onrender.com/route", {
     //const res = await fetch("http://127.0.0.1:8000/route", {
         method: "POST",
         headers: {
