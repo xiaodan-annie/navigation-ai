@@ -43,7 +43,7 @@ async function analyze() {
     });
 
     const data = await res.json();
-    console.log(data);
+    //console.log(data);
 }
 
 
@@ -68,7 +68,7 @@ async function analyze_o() {
     // TEXT OUTPUT
     // ----------------------------
     document.getElementById("error").innerText = "Please enter valid inputs";
-    
+
     document.getElementById("output").innerHTML = `
         <h3>Route Analysis</h3>
         <p><b>Origin:</b> ${data.origin}</p>
